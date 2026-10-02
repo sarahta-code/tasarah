@@ -229,11 +229,14 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
 .field li{margin-bottom:.3rem}
 .field li::marker{color:var(--sage)}
 
-.stats{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:.7rem;margin:1.1rem 0 0}
+.stats{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;margin:1.1rem 0 0}
 .case-inner > .stats:first-child{margin-top:0}
 .stats li{padding:.7rem .9rem .8rem;background:rgba(151,168,140,.16);border-left:2px solid var(--gold);border-radius:0 14px 14px 0}
 .stats b{display:block;font-family:var(--display);font-weight:500;font-size:clamp(1.55rem,3vw,1.95rem);line-height:1.1;letter-spacing:-.01em;color:var(--moss-deep)}
 .stats span{display:block;margin-top:.3rem;font-size:.8rem;line-height:1.35;color:var(--ink-soft)}
+/* on phones: two across, and an odd last tile spans the full row instead of sitting alone */
+.stats li:last-child:nth-child(odd){grid-column:1 / -1}
+@media(min-width:600px){ .stats{grid-template-columns:repeat(var(--n,3),minmax(0,1fr))} .stats li:last-child:nth-child(odd){grid-column:auto} }
 .evidence-row{display:grid;gap:.85rem;margin-top:.55rem}
 @media(min-width:700px){ .evidence-row.two{grid-template-columns:1fr 1fr} }
 .frame{padding:9px;border-radius:5px 18px 5px 18px;background:linear-gradient(145deg,var(--gold-pale),#CDBB8A 45%,var(--gold-pale));box-shadow:0 8px 22px -18px rgba(43,47,42,.8)}
@@ -267,7 +270,7 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
 .about-body p{margin-top:1rem}
 
 /* ---------- gallery ---------- */
-.gallery{column-count:3;column-gap:.85rem;margin-top:.55rem}
+.gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.85rem;margin-top:.55rem}
 .vid-link{display:inline-flex;align-items:center;gap:.35rem;color:var(--moss-deep);text-decoration:none;font-family:var(--body);font-style:normal;font-size:.8rem;font-weight:600;border-bottom:1px solid rgba(79,97,80,.3);padding-bottom:1px}
 .vid-link:hover{color:var(--rose-deep);border-color:var(--rose)}
 .vid-link svg{width:12px;height:12px;flex:none}
@@ -288,20 +291,26 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
 }
 .vid-card .play svg{width:24px;height:24px;margin-left:2px}
 .vid-card:hover .play{transform:translate(-50%,-50%) scale(1.1);background:#fff}
-@media(max-width:620px){ .gallery{column-count:2} }
+@media(max-width:560px){ .gallery{gap:.5rem} }
 .gal-item{
-  display:inline-block;width:100%;margin:0 0 .85rem;break-inside:avoid;
-  padding:5px;background:#FBF9F1;border:1px solid rgba(79,97,80,.14);
+  display:block;width:100%;aspect-ratio:10 / 13;padding:5px;
+  background:#FBF9F1;border:1px solid rgba(79,97,80,.14);
   border-radius:5px 17px 5px 17px;overflow:hidden;position:relative;
   box-shadow:0 6px 18px -14px rgba(43,47,42,.8);
   transform:rotate(var(--tilt,0deg));
   transition:transform .4s var(--ease),box-shadow .4s var(--ease);
 }
-.gal-item:nth-child(4n+1){--tilt:-.7deg}
-.gal-item:nth-child(4n+2){--tilt:.6deg}
-.gal-item:nth-child(4n+3){--tilt:.4deg}
-.gal-item:nth-child(4n){--tilt:-.5deg}
-.gal-item img{display:block;width:100%;height:auto;border-radius:3px 12px 3px 12px}
+/* mirrored tilt: left leans one way, right leans the other, middle stays level */
+.gal-item:nth-child(3n+1){--tilt:-.6deg}
+.gal-item:nth-child(3n+2){--tilt:0deg}
+.gal-item:nth-child(3n){--tilt:.6deg}
+/* every poster sits whole inside an identical frame, so nothing is cropped and rows line up */
+.gal-item img{display:block;width:100%;height:100%;object-fit:contain;border-radius:2px}
+@media(max-width:560px){
+  .gal-item{padding:3px;border-radius:4px 11px 4px 11px}
+  .gal-item:nth-child(3n+1){--tilt:-.4deg}
+  .gal-item:nth-child(3n){--tilt:.4deg}
+}
 .gal-item:hover{transform:translateY(-4px) rotate(0deg);box-shadow:0 16px 30px -18px rgba(43,47,42,.85)}
 .gal-label{
   position:absolute;left:5px;right:5px;bottom:5px;padding:.55rem .75rem .6rem;
@@ -312,8 +321,6 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
 }
 .gal-item:hover .gal-label,.gal-item:focus-visible .gal-label{transform:none;opacity:1}
 @media(hover:none){ .gal-label{display:none} }
-.gallery.pre-deal .gal-item{visibility:hidden}
-.case.dealing .case-body > div{overflow:visible}
 
 .lightbox{
   position:fixed;inset:0;z-index:200;display:none;flex-direction:column;align-items:center;
@@ -468,7 +475,7 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
         </button>
         <div class="case-body" id="c1"><div><div class="case-inner">
           <div class="field"><p>Computer vision that tracks and analyzes the causes of slow turnover, with an automated alert that eliminates communication lag. It runs on existing hospital cameras, so it is highly feasible to implement.</p></div>
-          <ul class="stats">
+          <ul class="stats" style="--n:3">
             <li><b>37,700</b><span>OR minutes recovered per hospital each year</span></li>
             <li><b>$3.77M</b><span>recovered value, or 191 more surgeries</span></li>
             <li><b>~$23B</b><span>a year if applied across U.S. hospitals</span></li>
@@ -527,7 +534,7 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
             <p>Company names and identifying details are replaced with placeholders for confidentiality.</p>
           </div>
           <div class="field"><p>A weighted scoring framework that rated each early-stage company on the same criteria (technical differentiation, strategic fit, team), weighted for a corporate venture arm.</p></div>
-          <ul class="stats">
+          <ul class="stats" style="--n:2">
             <li><b>30+ → 3</b><span>companies narrowed to finalists</span></li>
             <li><b>1</b><span>investment memo for an HP Tech Ventures partner</span></li>
           </ul>
@@ -555,7 +562,7 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
           <span class="case-peek"><span class="peek-in"><span class="peek-stack" aria-hidden="true"><img src="design-5.jpg" alt="" loading="lazy"><img src="design-10.jpg" alt="" loading="lazy"><img src="design-2.jpg" alt="" loading="lazy"><img src="design-7.jpg" alt="" loading="lazy"><img src="design-4.jpg" alt="" loading="lazy"></span><span class="peek-count">9 designs and 3 videos</span></span></span>
         </button>
         <div class="case-body" id="c4"><div><div class="case-inner">
-          <ul class="stats">
+          <ul class="stats" style="--n:4">
             <li><b>40–60%</b><span>increase in event participation</span></li>
             <li><b>90%</b><span>average viewership</span></li>
             <li><b>~60%</b><span>yearbook sales growth</span></li>
@@ -564,13 +571,13 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
           <div class="field">
             <div class="gallery" id="gallery">
           <button class="gal-item" type="button"><img src="design-2.jpg" alt="Collage page of student event photos with a film strip, sticky notes, and torn paper" loading="lazy"><span class="gal-label" aria-hidden="true">Event photo collage</span></button>
-          <button class="gal-item" type="button"><img src="design-5.jpg" alt="Spirit Week Monday poster for Decades Day, with a retro illustration of a woman on a skateboard" loading="lazy"><span class="gal-label" aria-hidden="true">Spirit week: Decades Day</span></button>
-          <button class="gal-item" type="button"><img src="design-8.jpg" alt="Scrapbook notebook page for the SJCC field trip, with film-strip photos" loading="lazy"><span class="gal-label" aria-hidden="true">SJCC field trip page</span></button>
           <button class="gal-item" type="button"><img src="design-3.jpg" alt="Senior camping trip poster titled camp!, with a group photo on a hammock" loading="lazy"><span class="gal-label" aria-hidden="true">Senior camping trip</span></button>
-          <button class="gal-item" type="button"><img src="design-9.jpg" alt="Thursday poster with a Roblox character reading Dress as your biggest ick" loading="lazy"><span class="gal-label" aria-hidden="true">Dress as your biggest ick</span></button>
-          <button class="gal-item" type="button"><img src="design-7.jpg" alt="Cultural Attire poster with a vintage camera and a fan of patterned textiles" loading="lazy"><span class="gal-label" aria-hidden="true">Cultural attire day</span></button>
           <button class="gal-item" type="button"><img src="design-10.jpg" alt="Yearbook flyer reading I want you to buy the yearbook, with a vintage Uncle Sam illustration and a QR code in a speech bubble" loading="lazy"><span class="gal-label" aria-hidden="true">Yearbook sales flyer</span></button>
+          <button class="gal-item" type="button"><img src="design-5.jpg" alt="Spirit Week Monday poster for Decades Day, with a retro illustration of a woman on a skateboard" loading="lazy"><span class="gal-label" aria-hidden="true">Spirit week: Decades Day</span></button>
+          <button class="gal-item" type="button"><img src="design-9.jpg" alt="Thursday poster with a Roblox character reading Dress as your biggest ick" loading="lazy"><span class="gal-label" aria-hidden="true">Dress as your biggest ick</span></button>
           <button class="gal-item" type="button"><img src="design-4.jpg" alt="MMCHS Spirit Week poster, a Spider-Man collage listing each day's theme" loading="lazy"><span class="gal-label" aria-hidden="true">MMCHS Spirit Week</span></button>
+          <button class="gal-item" type="button"><img src="design-8.jpg" alt="Scrapbook notebook page for the SJCC field trip, with film-strip photos" loading="lazy"><span class="gal-label" aria-hidden="true">SJCC field trip page</span></button>
+          <button class="gal-item" type="button"><img src="design-7.jpg" alt="Cultural Attire poster with a vintage camera and a fan of patterned textiles" loading="lazy"><span class="gal-label" aria-hidden="true">Cultural attire day</span></button>
           <button class="gal-item" type="button"><img src="design-6.jpg" alt="Retro computer screen announcing Anything but a water bottle day" loading="lazy"><span class="gal-label" aria-hidden="true">Anything but a water bottle</span></button>
             </div>
             <p class="gal-note">Spirit week posters, yearbook and event pages.</p>
@@ -793,7 +800,6 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
   var cases = Array.prototype.slice.call(document.querySelectorAll(".case"));
   function openCase(card){
     var btn = card.querySelector(".case-btn");
-    if(!card.hasAttribute("open")) prepDeal(card);
     card.setAttribute("open",""); btn.setAttribute("aria-expanded","true");
   }
   cases.forEach(function(card){
@@ -936,39 +942,6 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
     });
   }
 
-  /* ---------- first time the design box opens, the posters deal out of the stack ---------- */
-  var dealt = false;
-  function prepDeal(card){
-    if(dealt || reduce || !gal || !card.contains(gal) || !gal.animate) return;
-    var stack = card.querySelector(".peek-stack");
-    var r = stack ? stack.getBoundingClientRect() : null;
-    if(!r || !r.width) return;
-    dealt = true;
-    gal.querySelectorAll("img").forEach(function(i){ i.loading = "eager"; });
-    gal.classList.add("pre-deal");
-    var cx = r.left + r.width / 2 + window.pageXOffset, cy = r.top + r.height / 2 + window.pageYOffset;
-    setTimeout(function(){ runDeal(card, cx, cy); }, 580);
-  }
-  function runDeal(card, cx, cy){
-    var imgs = Array.prototype.slice.call(gal.querySelectorAll("img"));
-    var decoded = Promise.all(imgs.map(function(i){ return i.decode ? i.decode().catch(function(){}) : null; }));
-    Promise.race([decoded, new Promise(function(res){ setTimeout(res, 1200); })]).then(function(){
-      var tiles = Array.prototype.slice.call(gal.querySelectorAll(".gal-item"));
-      card.classList.add("dealing");
-      var runs = tiles.map(function(t, i){
-        var b = t.getBoundingClientRect();
-        var dx = (cx - window.pageXOffset) - (b.left + b.width / 2);
-        var dy = (cy - window.pageYOffset) - (b.top + b.height / 2);
-        var rot = (i % 2 ? 1 : -1) * (5 + (i % 3) * 4);
-        return t.animate([
-          { transform:"translate(" + dx.toFixed(0) + "px," + dy.toFixed(0) + "px) rotate(" + rot + "deg) scale(.2)", opacity:0, offset:0 },
-          { opacity:1, offset:.22 }
-        ], { duration:780, delay:i * 70, easing:"cubic-bezier(.22,.9,.3,1)", fill:"backwards" });
-      });
-      gal.classList.remove("pre-deal");
-      Promise.all(runs.map(function(a){ return a.finished.catch(function(){}); })).then(function(){ card.classList.remove("dealing"); });
-    });
-  }
   /* posters load quietly in the background so they are ready when the box opens */
   window.addEventListener("load", function(){
     setTimeout(function(){ if(gal) gal.querySelectorAll("img").forEach(function(i){ i.loading = "eager"; }); }, 700);
