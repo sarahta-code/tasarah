@@ -146,6 +146,7 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
 @media(max-width:1100px){ .hero-art{right:11%;width:min(300px,32%)} }
 @media(max-width:760px){ .hero-art{width:62%;right:-4%;top:5rem;opacity:.16} }
 #home .wrap{position:relative;z-index:1}
+#home{overflow-x:hidden;overflow-x:clip}
 .hero h1{margin:.55rem 0 0}
 .thesis{margin-top:1.4rem;font-family:var(--display);font-size:clamp(1.32rem,2.9vw,2.05rem);font-weight:300;line-height:1.28;color:var(--ink);max-width:21ch}
 .thesis em{font-style:italic;color:var(--moss)}
@@ -266,7 +267,7 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
 .about-body p{margin-top:1rem}
 
 /* ---------- gallery ---------- */
-.gallery{column-count:4;column-gap:.85rem;margin-top:.55rem}
+.gallery{column-count:3;column-gap:.85rem;margin-top:.55rem}
 .vid-link{display:inline-flex;align-items:center;gap:.35rem;color:var(--moss-deep);text-decoration:none;font-family:var(--body);font-style:normal;font-size:.8rem;font-weight:600;border-bottom:1px solid rgba(79,97,80,.3);padding-bottom:1px}
 .vid-link:hover{color:var(--rose-deep);border-color:var(--rose)}
 .vid-link svg{width:12px;height:12px;flex:none}
@@ -287,7 +288,6 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
 }
 .vid-card .play svg{width:24px;height:24px;margin-left:2px}
 .vid-card:hover .play{transform:translate(-50%,-50%) scale(1.1);background:#fff}
-@media(max-width:900px){ .gallery{column-count:3} }
 @media(max-width:620px){ .gallery{column-count:2} }
 .gal-item{
   display:inline-block;width:100%;margin:0 0 .85rem;break-inside:avoid;
@@ -303,23 +303,64 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
 .gal-item:nth-child(4n){--tilt:-.5deg}
 .gal-item img{display:block;width:100%;height:auto;border-radius:3px 12px 3px 12px}
 .gal-item:hover{transform:translateY(-4px) rotate(0deg);box-shadow:0 16px 30px -18px rgba(43,47,42,.85)}
+.gal-label{
+  position:absolute;left:5px;right:5px;bottom:5px;padding:.55rem .75rem .6rem;
+  border-radius:0 0 3px 12px;background:#FBF9F1;color:var(--moss-deep);
+  font-family:var(--display);font-style:italic;font-size:.9rem;line-height:1.25;text-align:left;
+  transform:translateY(101%);opacity:0;pointer-events:none;
+  transition:transform .4s var(--ease),opacity .3s var(--ease);
+}
+.gal-item:hover .gal-label,.gal-item:focus-visible .gal-label{transform:none;opacity:1}
+@media(hover:none){ .gal-label{display:none} }
+.gallery.pre-deal .gal-item{visibility:hidden}
+.case.dealing .case-body > div{overflow:visible}
 
 .lightbox{
-  position:fixed;inset:0;z-index:200;display:none;place-items:center;padding:3vmin;
-  background:rgba(30,34,29,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  position:fixed;inset:0;z-index:200;display:none;flex-direction:column;align-items:center;
+  padding:max(3vmin,.8rem) 3vmin 0;
+  background:rgba(30,34,29,.86);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
 }
-.lightbox.on{display:grid}
-.lightbox img{max-width:100%;max-height:94vh;border-radius:4px 20px 4px 20px;box-shadow:0 30px 70px -30px rgba(0,0,0,.9)}
+.lightbox.on{display:flex}
+.lb-stage{flex:1;min-height:0;width:100%;display:flex;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.lb-stage img{
+  margin:auto;flex:none;width:auto;height:auto;max-width:100%;
+  max-height:calc(100vh - 6.2rem);max-height:calc(100dvh - 6.2rem);
+  border-radius:4px 20px 4px 20px;box-shadow:0 30px 70px -30px rgba(0,0,0,.9);
+  cursor:zoom-in;user-select:none;-webkit-user-drag:none;
+}
+.lb-stage.zoomed img{max-width:none;max-height:none;cursor:zoom-out;border-radius:4px}
+.lb-bar{
+  flex:none;max-width:100%;display:flex;align-items:center;justify-content:center;gap:1.6rem;
+  padding:.75rem .2rem calc(1rem + env(safe-area-inset-bottom,0px));color:rgba(245,242,232,.94);
+}
+.lb-cap{font-family:var(--display);font-style:italic;font-size:1.02rem;min-width:0}
+.lb-tools{display:flex;align-items:center;gap:.9rem;flex:none;font-size:.82rem}
+.lb-count{opacity:.75}
+.lb-zoom{
+  background:rgba(245,242,232,.14);color:inherit;border:1px solid rgba(245,242,232,.38);
+  border-radius:14px 9px 15px 8px;padding:.32rem .8rem;font:inherit;
+  transition:background .25s var(--ease);
+}
+.lb-zoom:hover{background:rgba(245,242,232,.28)}
 .lb-close{
-  position:absolute;top:1.1rem;right:1.2rem;width:42px;height:42px;border-radius:50%;
+  position:absolute;top:1.1rem;right:1.2rem;z-index:2;width:42px;height:42px;border-radius:50%;
   background:rgba(245,242,232,.9);border:0;color:var(--moss-deep);display:grid;place-items:center;
 }
 .lb-nav{
-  position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;
+  position:absolute;z-index:2;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;
   background:rgba(245,242,232,.82);border:0;color:var(--moss-deep);display:grid;place-items:center;
 }
 .lb-prev{left:1.2rem}.lb-next{right:1.2rem}
-@media(max-width:560px){ .lb-nav{width:38px;height:38px} }
+@media(max-width:560px){ .lb-nav{width:38px;height:38px} .lb-bar{flex-wrap:wrap} }
+
+/* in-page video player */
+.videobox{justify-content:center;padding:max(3vmin,.8rem)}
+.vb-wrap{width:min(1000px,100%,calc((100vh - 7rem) * 1.7778));width:min(1000px,100%,calc((100dvh - 7rem) * 1.7778))}
+.vb-frame{aspect-ratio:16/9;background:#1b1f1a;border-radius:4px 20px 4px 20px;overflow:hidden;box-shadow:0 30px 70px -30px rgba(0,0,0,.9)}
+.vb-frame iframe{display:block;width:100%;height:100%;border:0}
+.videobox .lb-bar{width:100%;justify-content:space-between}
+.videobox .vid-link{color:var(--paper);border-color:rgba(245,242,232,.45)}
+.videobox .vid-link:hover{color:#fff;border-color:#fff}
 
 /* ---------- contact ---------- */
 #contact{padding-bottom:clamp(2.8rem,6vw,4.2rem)}
@@ -507,11 +548,11 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
             <ellipse cx="10.5" cy="14" rx="3.6" ry="6" transform="rotate(-42 10.5 14)" fill="currentColor" opacity=".6"/>
             <ellipse cx="23.5" cy="14" rx="3.6" ry="6" transform="rotate(42 23.5 14)" fill="currentColor" opacity=".6"/>
           </svg>
-          <span class="case-title">Posters, yearbook pages, and recap videos for a whole school</span>
+          <span class="case-title">Some design and video work</span>
           <span class="case-hook">Event participation up 40–60%, yearbook sales up ~60%</span>
           <span class="case-tags"><span class="chip chip-creative">Design &amp; video</span><span class="chip chip-org">Student Government and Yearbook</span></span>
           <svg class="case-chev" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9.5 12 15.5 18 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-          <span class="case-peek"><span class="peek-in"><span class="peek-stack" aria-hidden="true"><img src="design-5.jpg" alt="" loading="lazy"><img src="design-2.jpg" alt="" loading="lazy"><img src="design-7.jpg" alt="" loading="lazy"><img src="design-4.jpg" alt="" loading="lazy"><img src="design-8.jpg" alt="" loading="lazy"></span><span class="peek-count">8 designs and 3 videos</span></span></span>
+          <span class="case-peek"><span class="peek-in"><span class="peek-stack" aria-hidden="true"><img src="design-5.jpg" alt="" loading="lazy"><img src="design-10.jpg" alt="" loading="lazy"><img src="design-2.jpg" alt="" loading="lazy"><img src="design-7.jpg" alt="" loading="lazy"><img src="design-4.jpg" alt="" loading="lazy"></span><span class="peek-count">9 designs and 3 videos</span></span></span>
         </button>
         <div class="case-body" id="c4"><div><div class="case-inner">
           <ul class="stats">
@@ -522,14 +563,15 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
           </ul>
           <div class="field">
             <div class="gallery" id="gallery">
-          <button class="gal-item" type="button"><img src="design-5.jpg" alt="Spirit Week Monday poster for Decades Day, with a retro illustration of a woman on a skateboard" loading="lazy"></button>
-          <button class="gal-item" type="button"><img src="design-2.jpg" alt="Collage page of student event photos with a film strip, sticky notes, and torn paper" loading="lazy"></button>
-          <button class="gal-item" type="button"><img src="design-7.jpg" alt="Cultural Attire poster with a vintage camera and a fan of patterned textiles" loading="lazy"></button>
-          <button class="gal-item" type="button"><img src="design-4.jpg" alt="MMCHS Spirit Week poster, a Spider-Man collage listing each day's theme" loading="lazy"></button>
-          <button class="gal-item" type="button"><img src="design-8.jpg" alt="Scrapbook notebook page for the SJCC field trip, with film-strip photos" loading="lazy"></button>
-          <button class="gal-item" type="button"><img src="design-3.jpg" alt="Senior camping trip poster titled camp!, with a group photo on a hammock" loading="lazy"></button>
-          <button class="gal-item" type="button"><img src="design-6.jpg" alt="Retro computer screen announcing Anything but a water bottle day" loading="lazy"></button>
-          <button class="gal-item" type="button"><img src="design-9.jpg" alt="Thursday poster with a Roblox character reading Dress as your biggest ick" loading="lazy"></button>
+          <button class="gal-item" type="button"><img src="design-2.jpg" alt="Collage page of student event photos with a film strip, sticky notes, and torn paper" loading="lazy"><span class="gal-label" aria-hidden="true">Event photo collage</span></button>
+          <button class="gal-item" type="button"><img src="design-5.jpg" alt="Spirit Week Monday poster for Decades Day, with a retro illustration of a woman on a skateboard" loading="lazy"><span class="gal-label" aria-hidden="true">Spirit week: Decades Day</span></button>
+          <button class="gal-item" type="button"><img src="design-8.jpg" alt="Scrapbook notebook page for the SJCC field trip, with film-strip photos" loading="lazy"><span class="gal-label" aria-hidden="true">SJCC field trip page</span></button>
+          <button class="gal-item" type="button"><img src="design-3.jpg" alt="Senior camping trip poster titled camp!, with a group photo on a hammock" loading="lazy"><span class="gal-label" aria-hidden="true">Senior camping trip</span></button>
+          <button class="gal-item" type="button"><img src="design-9.jpg" alt="Thursday poster with a Roblox character reading Dress as your biggest ick" loading="lazy"><span class="gal-label" aria-hidden="true">Dress as your biggest ick</span></button>
+          <button class="gal-item" type="button"><img src="design-7.jpg" alt="Cultural Attire poster with a vintage camera and a fan of patterned textiles" loading="lazy"><span class="gal-label" aria-hidden="true">Cultural attire day</span></button>
+          <button class="gal-item" type="button"><img src="design-10.jpg" alt="Yearbook flyer reading I want you to buy the yearbook, with a vintage Uncle Sam illustration and a QR code in a speech bubble" loading="lazy"><span class="gal-label" aria-hidden="true">Yearbook sales flyer</span></button>
+          <button class="gal-item" type="button"><img src="design-4.jpg" alt="MMCHS Spirit Week poster, a Spider-Man collage listing each day's theme" loading="lazy"><span class="gal-label" aria-hidden="true">MMCHS Spirit Week</span></button>
+          <button class="gal-item" type="button"><img src="design-6.jpg" alt="Retro computer screen announcing Anything but a water bottle day" loading="lazy"><span class="gal-label" aria-hidden="true">Anything but a water bottle</span></button>
             </div>
             <p class="gal-note">Spirit week posters, yearbook and event pages.</p>
             <div class="vid-grid">
@@ -611,10 +653,25 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
 </main>
 
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Enlarged design">
-  <img id="lbImg" alt="">
+  <div class="lb-stage" id="lbStage"><img id="lbImg" alt=""></div>
+  <div class="lb-bar" aria-live="polite">
+    <span class="lb-cap" id="lbCap"></span>
+    <span class="lb-tools"><span class="lb-count" id="lbCount"></span><button class="lb-zoom" id="lbZoom" type="button" aria-pressed="false">Zoom in</button></span>
+  </div>
   <button class="lb-close" id="lbClose" aria-label="Close"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
   <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M11.5 3L5 9l6.5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <button class="lb-nav lb-next" id="lbNext" aria-label="Next"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M6.5 3L13 9l-6.5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+
+<div class="lightbox videobox" id="videobox" role="dialog" aria-modal="true" aria-label="Video player">
+  <div class="vb-wrap">
+    <div class="vb-frame"><iframe id="vbFrame" title="Video" allow="autoplay; fullscreen" allowfullscreen></iframe></div>
+    <div class="lb-bar">
+      <span class="lb-cap" id="vbTitle"></span>
+      <a class="vid-link" id="vbOpen" href="#" target="_blank" rel="noopener">Open in Google Drive <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3h7v7M13 3 3.5 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+  </div>
+  <button class="lb-close" id="vbClose" aria-label="Close video"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
 </div>
 
 
@@ -736,6 +793,7 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
   var cases = Array.prototype.slice.call(document.querySelectorAll(".case"));
   function openCase(card){
     var btn = card.querySelector(".case-btn");
+    if(!card.hasAttribute("open")) prepDeal(card);
     card.setAttribute("open",""); btn.setAttribute("aria-expanded","true");
   }
   cases.forEach(function(card){
@@ -772,42 +830,149 @@ section{padding:clamp(3.4rem,7vw,5.6rem) 0;scroll-margin-top:70px}
     cases.forEach(function(c){ io.observe(c); });
   } else { cases.forEach(function(c){ c.classList.add("grown"); }); }
 
-  /* ---------- gallery lightbox ---------- */
+  /* ---------- shared modal helpers ---------- */
+  var opener = null;
+  function lockScroll(on){ document.body.style.overflow = on ? "hidden" : ""; }
+  function trapTab(e, box){
+    if(e.key !== "Tab") return;
+    var f = Array.prototype.slice.call(box.querySelectorAll("button,a[href]"));
+    if(!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  }
+
+  /* ---------- poster viewer: caption, counter, swipe, zoom ---------- */
   var gal = document.getElementById("gallery");
-  var lb = document.getElementById("lightbox"), lbImg = document.getElementById("lbImg");
+  var lb = document.getElementById("lightbox");
   if(gal && lb){
-    var shots = Array.prototype.slice.call(gal.querySelectorAll("img"));
-    var at = 0, opener = null;
-    function show(i){
-      at = (i + shots.length) % shots.length;
-      lbImg.src = shots[at].src;
+    var lbImg = document.getElementById("lbImg"), lbStage = document.getElementById("lbStage"),
+        lbCap = document.getElementById("lbCap"), lbCount = document.getElementById("lbCount"),
+        lbZoom = document.getElementById("lbZoom");
+    var items = Array.prototype.slice.call(gal.querySelectorAll(".gal-item"));
+    var at = 0;
+    function setZoom(on){
+      lbStage.classList.toggle("zoomed", on);
+      lbZoom.setAttribute("aria-pressed", String(on));
+      lbZoom.textContent = on ? "Fit to screen" : "Zoom in";
+      if(on){ requestAnimationFrame(function(){ lbStage.scrollLeft = (lbStage.scrollWidth - lbStage.clientWidth) / 2; lbStage.scrollTop = 0; }); }
     }
-    function open(i, btn){
-      opener = btn; show(i); lb.classList.add("on");
-      document.body.style.overflow = "hidden";
+    function show(i){
+      at = (i + items.length) % items.length;
+      var img = items[at].querySelector("img"), label = items[at].querySelector(".gal-label");
+      setZoom(false);
+      lbImg.src = img.src; lbImg.alt = img.alt;
+      lbCap.textContent = label ? label.textContent.trim() : "";
+      lbCount.textContent = (at + 1) + " of " + items.length;
+      [at + 1, at - 1].forEach(function(n){ new Image().src = items[(n + items.length) % items.length].querySelector("img").src; });
+    }
+    function openViewer(i, btn){
+      opener = btn; show(i); lb.classList.add("on"); lockScroll(true);
       document.getElementById("lbClose").focus();
     }
-    function close(){
-      lb.classList.remove("on"); lbImg.src = "";
-      document.body.style.overflow = "";
+    function closeViewer(){
+      lb.classList.remove("on"); lbImg.removeAttribute("src"); setZoom(false); lockScroll(false);
       if(opener) opener.focus();
     }
     gal.addEventListener("click", function(e){
       var btn = e.target.closest(".gal-item");
-      if(!btn) return;
-      open(shots.indexOf(btn.querySelector("img")), btn);
+      if(btn) openViewer(items.indexOf(btn), btn);
     });
-    document.getElementById("lbClose").addEventListener("click", close);
+    lbImg.addEventListener("click", function(){ setZoom(!lbStage.classList.contains("zoomed")); });
+    lbZoom.addEventListener("click", function(){ setZoom(!lbStage.classList.contains("zoomed")); });
+    document.getElementById("lbClose").addEventListener("click", closeViewer);
     document.getElementById("lbPrev").addEventListener("click", function(){ show(at - 1); });
     document.getElementById("lbNext").addEventListener("click", function(){ show(at + 1); });
-    lb.addEventListener("click", function(e){ if(e.target === lb) close(); });
+    lb.addEventListener("click", function(e){ if(e.target === lb || e.target === lbStage) closeViewer(); });
+    /* swipe left/right on a phone (disabled while zoomed, so panning still works) */
+    var sx = 0, sy = 0, swiping = false;
+    lbStage.addEventListener("touchstart", function(e){
+      if(lbStage.classList.contains("zoomed") || e.touches.length !== 1){ swiping = false; return; }
+      swiping = true; sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+    }, { passive:true });
+    lbStage.addEventListener("touchend", function(e){
+      if(!swiping) return; swiping = false;
+      var t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+      if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) show(at + (dx < 0 ? 1 : -1));
+    }, { passive:true });
     document.addEventListener("keydown", function(e){
       if(!lb.classList.contains("on")) return;
-      if(e.key === "Escape") close();
+      if(e.key === "Escape") closeViewer();
       else if(e.key === "ArrowLeft") show(at - 1);
       else if(e.key === "ArrowRight") show(at + 1);
+      else trapTab(e, lb);
     });
   }
+
+  /* ---------- videos play on the page (Drive preview), with a link out as backup ---------- */
+  var vb = document.getElementById("videobox");
+  if(vb){
+    var vbFrame = document.getElementById("vbFrame"), vbTitle = document.getElementById("vbTitle"),
+        vbOpen = document.getElementById("vbOpen"), vbClose = document.getElementById("vbClose");
+    function openVideo(a){
+      var m = /\/d\/([^\/?#]+)/.exec(a.getAttribute("href") || "");
+      if(!m) return false;
+      var title = (a.getAttribute("aria-label") || a.textContent).replace(/^Play\s+/, "").replace(/\s+/g, " ").trim();
+      opener = a; vbTitle.textContent = title; vbFrame.title = title;
+      vbOpen.setAttribute("href", a.getAttribute("href"));
+      vbFrame.src = "https://drive.google.com/file/d/" + m[1] + "/preview";
+      vb.classList.add("on"); lockScroll(true); vbClose.focus();
+      return true;
+    }
+    function closeVideo(){
+      vb.classList.remove("on"); vbFrame.src = "about:blank"; lockScroll(false);
+      if(opener) opener.focus();
+    }
+    document.addEventListener("click", function(e){
+      var a = e.target.closest ? e.target.closest(".vid-grid a") : null;
+      if(!a || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      if(openVideo(a)) e.preventDefault();
+    });
+    vbClose.addEventListener("click", closeVideo);
+    vb.addEventListener("click", function(e){ if(e.target === vb) closeVideo(); });
+    document.addEventListener("keydown", function(e){
+      if(!vb.classList.contains("on")) return;
+      if(e.key === "Escape") closeVideo(); else trapTab(e, vb);
+    });
+  }
+
+  /* ---------- first time the design box opens, the posters deal out of the stack ---------- */
+  var dealt = false;
+  function prepDeal(card){
+    if(dealt || reduce || !gal || !card.contains(gal) || !gal.animate) return;
+    var stack = card.querySelector(".peek-stack");
+    var r = stack ? stack.getBoundingClientRect() : null;
+    if(!r || !r.width) return;
+    dealt = true;
+    gal.querySelectorAll("img").forEach(function(i){ i.loading = "eager"; });
+    gal.classList.add("pre-deal");
+    var cx = r.left + r.width / 2 + window.pageXOffset, cy = r.top + r.height / 2 + window.pageYOffset;
+    setTimeout(function(){ runDeal(card, cx, cy); }, 580);
+  }
+  function runDeal(card, cx, cy){
+    var imgs = Array.prototype.slice.call(gal.querySelectorAll("img"));
+    var decoded = Promise.all(imgs.map(function(i){ return i.decode ? i.decode().catch(function(){}) : null; }));
+    Promise.race([decoded, new Promise(function(res){ setTimeout(res, 1200); })]).then(function(){
+      var tiles = Array.prototype.slice.call(gal.querySelectorAll(".gal-item"));
+      card.classList.add("dealing");
+      var runs = tiles.map(function(t, i){
+        var b = t.getBoundingClientRect();
+        var dx = (cx - window.pageXOffset) - (b.left + b.width / 2);
+        var dy = (cy - window.pageYOffset) - (b.top + b.height / 2);
+        var rot = (i % 2 ? 1 : -1) * (5 + (i % 3) * 4);
+        return t.animate([
+          { transform:"translate(" + dx.toFixed(0) + "px," + dy.toFixed(0) + "px) rotate(" + rot + "deg) scale(.2)", opacity:0, offset:0 },
+          { opacity:1, offset:.22 }
+        ], { duration:780, delay:i * 70, easing:"cubic-bezier(.22,.9,.3,1)", fill:"backwards" });
+      });
+      gal.classList.remove("pre-deal");
+      Promise.all(runs.map(function(a){ return a.finished.catch(function(){}); })).then(function(){ card.classList.remove("dealing"); });
+    });
+  }
+  /* posters load quietly in the background so they are ready when the box opens */
+  window.addEventListener("load", function(){
+    setTimeout(function(){ if(gal) gal.querySelectorAll("img").forEach(function(i){ i.loading = "eager"; }); }, 700);
+  });
 
   /* ---------- copy the email instead of opening a mail client ---------- */
   var mail = document.getElementById("mailBtn");
